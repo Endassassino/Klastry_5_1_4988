@@ -1,0 +1,24 @@
+Ćw 1
+1. Przez to, że wynik może być inny od zera to operacje counter +=1 i counter -=1 wykonywane jednocześnie omgą nadpisywać swoje wyniki.
+2. Counter +=1 i counter -=1 powinny być chronione, ponieważ korzystają ze wspólnego zasobu.
+3. Tak, wystarczy wykorzystać threading.Lock dla counter +=1 i counter -=1, aby zapobiec dalszym błędom.
+
+Ćw 2
+1. Występuje on między sprawdzaniem warunku "while tasks:" a operacją tasks.pop()
+Oba wątki mogą stwierdzić, że lista jest pusta przez co pierwszy pobierze ostatni wątek a drugi spróbuje wykonać zadanie co skończy się błędem IndexError.
+2. Trzeba vhronić sekcje sprawdzania "if not tasks" oraz pobieranie w "tasks.pop(0).
+3. Blokada powinna znaleźć się wewnątrz pętli while.
+
+Ćw 3
+1. 
+	a. Wątek 1 zdobywa blokadę lock_a.
+	b. Wątek 2 zdobywa blokadę lock_b.
+	c. Oba wątki usypiają na 1 sekundę (time.sleep(1)).
+	d. Po przebudzeniu wątek 1 próbuje zdobyć lock_b, ale jest ona zajęta przez wątek 2.
+	e. Jednocześnie wątek 2 próbuje zdobyć lock_a, ale jest ona zajęta przez wątek 1.
+	f. Każdy wątek czeka na zwolnienie blokady, którą posiada drugi wątek.
+	g. Żaden z nich nie może kontynuować pracy ani zwolnić swojej blokady, więc program zawiesza się na stałe.
+	
+2. Jest to sytuacja gdy dwa lub więcej wątków czeka na siebie wzajemnie, aby skorzystać z zasobów będących wykorzystywanym przez inne.\
+
+3. Najlepiej ustalić kolejność w jakiim mają być wykorzystane blokady, aby zawsze musiały przejsc przez tą samą zanim wykorzystają drugą.
