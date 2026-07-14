@@ -1,0 +1,1 @@
+Dane pobrano z https://trace.ncbi.nlm.nih.gov/Traces/?view=run_browser&acc=SRR16356246&display=metadata
