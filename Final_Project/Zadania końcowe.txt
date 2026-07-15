@@ -1,0 +1,77 @@
+Zad 1
+
+Opis:
+Program wykonuje trzy operacje:
+1. Z nagłówka wyciąga wartość length=
+2. Oblicza długość sekwencji
+3. Porównuje obie wartości
+
+Jeżeli są różne, rekord zostaje uznany za niespójny.
+
+Powstał 1 Job, ponieważ wywołano jedną akcję (count()).
+
+Transformacje dotyczą:
+1. withColumn()
+2. regexp_extract()
+3. length()
+4. filter()
+
+Akcja jest "count()"
+
+Powstał 1 Stage ponieważ nie występuje "shuffle".
+
+Zad 2
+
+Opis:
+Dla każdego rekordu Spark sprawdza, czy w kolumnie quality znajduje się znak # i w przypadku jego wykrycia uznaje, że taki odczyt posiada niską jakość.
+
+Zadanie 2 zostało wykonane szybciej, ponieważ "contains()" wykonuje zwykłe wyszukiwanie znaku.
+Natomiast Zadanie 1 używało :
+- regexp_extract
+- length
+- porównanie liczb
+czyli więcej operacji co skutkuje większym nakładem pracy.
+
+Przy wykonaniu komend "reads_df.cache()" i "reads_df.count()" Spark UI wykonać Stage oznaczone jako
+Skipped, co oznacza użycie pamięci zamiast ponownego odczytu z dysku.
+
+Locality Level to PROCESS_LOCAL i oznacza, że dane znajdyją się w pamięci tego samego procesu.
+
+Każdy task przetwarza rekordy należące do jednej partycji a ich łączna liczba zależna jest od sumy rekordów ze wsyztskich tasków.
+
+Zad 3
+
+Lista Jobów:
+
+analysis_df.count() -> Job 1
+
+analysis_df.show()  Jo->b 2
+
+analysis_df.count() -> Job 3
+
+distinct().count() -> Job 4
+
+filter().show() -> Job 5
+
+W pierwszym Stage wykonywane są:
+- withColumn
+- contains
+- length
+- groupBy
+
+A na koniec "Shuffle Write", aby pogrupować dane.
+
+Stage 2 wykonuje "Shuffle Read" oraz count(), aby przeprowadzić agregacje danych.
+
+Po wykonaniu pierwszego "analysis_df.count()" wynik zostaje zapisany w pamięci, a kolejne Joby korzystają z cache.
+
+W Spark UI część Stage może mieć status "Skipped">
+
+Pierwszy Job 1 jest największy, ponieważ dane czytane są z dysku, a kolejne Joby -> Input Size jest bardzo mały lub równy 0, ponieważ dane pochodzą z pamięci.
+
+Dla cache pierwsze wykonanie trwa najdłużej, a kolejne wykonania są znacznie szybsze, ponieważ Spark korzysta z pamięci RAM zamiast ponownie wykonywać wszystkie transformacje.
+
+Locality Level: 
+PROCESS_LOCAL -> dane znajdują się w pamięci procesu wykonującego obliczenia.
+
+NODE_LOCAL -> odczyt z pamięci innego procesu na tym samym węźle.
